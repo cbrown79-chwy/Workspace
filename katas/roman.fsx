@@ -1,4 +1,6 @@
-let convert intValue = 
+let convert intValue =  
+    let swap (stringToFind : string) swapString (inString : string) = 
+        inString.Replace(stringToFind, swapString)
     let rec loop acc n = 
         match n with 
         | a when a >= 1000 -> loop (acc + "M") (n - 1000)
@@ -10,7 +12,12 @@ let convert intValue =
         | a when a >= 1 -> loop (acc + "I") (n - 1)
         | _ -> acc + ""
     loop "" intValue
+        |> swap "DCCCC" "CM"
+        |> swap "CCCC" "CD"
+        |> swap "LXXXX" "XC"
+        |> swap "XXXX" "XL"
+        |> swap "VIIII" "IX"
+        |> swap "IIII" "IV"
     
 
-let swap (inString : string) (stringToFind : string) swapString = 
-    inString.Replace(stringToFind, swapString)
+
