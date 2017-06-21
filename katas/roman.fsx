@@ -4,7 +4,7 @@ let convert iVal =
                 (10, "X");(9,"IX");(5,"V");(4,"IV");(1, "I")]
     let rec loop acc n list = 
         match list with 
-            | [] -> acc + ""
+            | [] -> acc
             | (i, s)::xs when n >= i -> loop (acc + s) (n - i) list
             | x::xs -> loop acc n xs
     loop "" iVal vals
