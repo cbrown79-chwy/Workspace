@@ -1,16 +1,15 @@
-let availableChars = ['A' .. 'Z']
-
 open System
 
 let diamond char = 
-    let location = (List.findIndex (fun a -> a = char) availableChars) + 1
+    let space i = new string (' ', i)
+    let availableChars = [ 'A' .. char ]
+    let location = List.length availableChars
     let locCount i = location - (i + 1)
-    let start = availableChars |> List.takeWhile (fun a -> a <> char) |> List.mapi (fun i c -> c, locCount i)
+    let start = availableChars |> List.take (location - 1) |> List.mapi (fun i c -> c, locCount i)
     let en = (char,0) 
     let all = start @ (en :: List.rev start)
     let m = all |> List.map (fun (c, i) -> 
                        match (location * 2 - 1) - (i * 2 + 1) with 
-                       | 0 -> new string(' ', i) + c.ToString() + new string(' ', i)
-                       | a -> new string(' ', i) + c.ToString() + new string(' ', a - 1) + c.ToString() + new string(' ', i))
-    let di = m |> List.reduce (fun x y -> sprintf "%s%s%s" x Environment.NewLine y)
-    sprintf "%s%s%s" Environment.NewLine Environment.NewLine di
+                       | 0 -> space i + c.ToString() + space i
+                       | a -> space i + c.ToString() + space (a - 1) + c.ToString() + space i)
+    Environment.NewLine :: m |> List.reduce (fun x y -> sprintf "%s%s%s" x Environment.NewLine y)
