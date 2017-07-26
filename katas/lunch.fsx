@@ -8,7 +8,6 @@ type Message =
 type Lunch = { Name : string; Votes : int }
 
 let merge lunch1 lunch2 = { lunch1 with Votes = lunch1.Votes + lunch2.Votes}
-let print listOfLunches = listOfLunches |> 
 
 let voteMachine = MailboxProcessor<Message>.Start(fun inbox ->
         let rec loop (state: Lunch list) = async {
@@ -37,7 +36,7 @@ let voteMachine = MailboxProcessor<Message>.Start(fun inbox ->
                     |> List.map (fun i -> sprintf "%s : %i" i.Name i.Votes)
                     |> List.iter System.Console.WriteLine
                     |> ignore
-                return loop state
+                return! loop state
         }
         loop []
     )
