@@ -8,7 +8,7 @@ type Message =
 type Lunch = { Name : string; Votes : int }
 
 let voteMachine = MailboxProcessor<Message>.Start(fun inbox ->
-        let rec loop (state: Lunch list) = async {
+        let rec loop state = async {
             let! msg = inbox.Receive()
 
             match msg with
