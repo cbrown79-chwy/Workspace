@@ -6,6 +6,7 @@ type Message =
     | Render 
 
 type Lunch = { Name : string; Votes : int }
+
 let merge lunch1 lunch2 = { lunch1 with Votes = lunch1.Votes + lunch2.Votes}
 let lunch restaurantName votes = { Name = restaurantName; Votes = votes }
 let empty restaurantName = lunch restaurantName 0
