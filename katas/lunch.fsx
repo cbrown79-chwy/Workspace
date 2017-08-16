@@ -6,37 +6,51 @@ type Message =
     | Render 
 
 type Lunch = { Name : string; Votes : int }
+let merge lunch1 lunch2 = { lunch1 with Votes = lunch1.Votes + lunch2.Votes}
+let lunch restaurantName votes = { Name = restaurantName; Votes = votes }
+let empty restaurantName = lunch restaurantName 0
+
+let reduce listOfLunches = 
+    listOfLunches 
+        |> List.groupBy (fun n -> n.Name)
+        |> List.map (fun (name, group) -> group |> List.reduce merge)
+        |> List.sortByDescending (fun n -> n.Votes)
 
 let voteMachine = MailboxProcessor<Message>.Start(fun inbox ->
         let rec loop state = async {
             let! msg = inbox.Receive()
 
             match msg with
-            | Init l -> 
-                let restaurants = List.map (fun item -> { Name= item; Votes= 0 }) l
-                return! loop restaurants
-            | Downvote s | Upvote s -> 
+            | Init listOfRestaurantNames -> 
+                let emptyLunches = listOfRestaurantNames
+                                    |> List.distinct 
+                                    |> List.map empty
+                
+                return! loop emptyLunches
+
+            | Downvote restaurantName | Upvote restaurantName -> 
                 let newLunch = match msg with 
-                                    | Downvote _ -> { Name = s; Votes = -2};
-                                    | _ -> { Name = s; Votes = 1}
-                let merge lunch1 lunch2 = { lunch1 with Votes = lunch1.Votes + lunch2.Votes}
-                let newState = newLunch::state 
-                                |> List.groupBy (fun n -> n.Name)
-                                |> List.map (fun (s, l) -> List.reduce merge l)
-                                |> List.sortByDescending (fun n -> n.Votes)
-                return! loop newState
-            | DownAndDestroy s ->
-                let direction name = if name = s then -2 
+                                    | Downvote _ -> lunch restaurantName -2;
+                                    | _ -> lunch restaurantName 1
+
+                let results = newLunch::state 
+                                |> reduce
+
+                return! loop results
+
+            | DownAndDestroy restaurantName ->
+                let direction name = if name = restaurantName then -2 
                                      else 1
-                let newState = state 
-                                |> List.map (fun n -> { n with Votes = n.Votes + direction n.Name }) 
-                                |> List.sortByDescending (fun n -> n.Votes)
-                return! loop newState
+                let newVotes = state |> List.map (fun n -> {n with Votes = direction n.Name})
+                let results = newVotes @ state
+                                 |> reduce
+                return! loop results
+                
             | Render ->
                 state 
                     |> List.map (fun i -> sprintf "%s : %i" i.Name i.Votes)
                     |> List.iter System.Console.WriteLine
-                    |> ignore
+                // no change to state here
                 return! loop state
         }
         loop []
