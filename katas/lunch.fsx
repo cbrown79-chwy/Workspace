@@ -41,7 +41,9 @@ let voteMachine = MailboxProcessor<Message>.Start(fun inbox ->
             | DownAndDestroy restaurantName ->
                 let direction name = if name = restaurantName then -2 
                                      else 1
+                                     
                 let newVotes = state |> List.map (fun n -> {n with Votes = direction n.Name})
+
                 let results = newVotes @ state
                                  |> reduce
                 return! loop results
