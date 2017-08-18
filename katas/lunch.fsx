@@ -61,7 +61,7 @@ let voteMachine = MailboxProcessor<Message>.Start(fun inbox ->
 let render() = voteMachine.Post (Render)
 let up rest = 
     voteMachine.Post (Upvote rest)
-    render()
+    render()  
     
 let down rest = 
     voteMachine.Post (Downvote rest)
