@@ -17,7 +17,7 @@ let reduce listOfLunches =
         |> List.map (fun (name, group) -> group |> List.reduce merge)
         |> List.sortByDescending (fun n -> n.Votes)
 
-let voteMachine = MailboxProcessor<Message>.Start(fun inbox ->
+let lunchVoteActor = MailboxProcessor<Message>.Start(fun inbox ->
         let rec loop state = async {
             let! msg = inbox.Receive()
 
@@ -44,7 +44,8 @@ let voteMachine = MailboxProcessor<Message>.Start(fun inbox ->
                 let direction name = if name = restaurantName then -2 
                                      else 1
                                      
-                let newVotes = state |> List.map (fun n -> {n with Votes = direction n.Name})
+                let newVotes = state 
+                                |> List.map (fun n -> {n with Votes = direction n.Name})
 
                 let results = newVotes @ state
                                  |> reduce
@@ -59,19 +60,19 @@ let voteMachine = MailboxProcessor<Message>.Start(fun inbox ->
         }
         loop []
     )
-let render() = voteMachine.Post (Render)
+let render() = lunchVoteActor.Post (Render)
 let up rest = 
-    voteMachine.Post (Upvote rest)
+    lunchVoteActor.Post (Upvote rest)
     render()  
     
 let down rest = 
-    voteMachine.Post (Downvote rest)
+    lunchVoteActor.Post (Downvote rest)
     render()
 let dd rest = 
-    voteMachine.Post (DownAndDestroy rest)
+    lunchVoteActor.Post (DownAndDestroy rest)
     render()
 let init restList = 
-    voteMachine.Post (Init restList)
+    lunchVoteActor.Post (Init restList)
     render()
 
 
