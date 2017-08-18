@@ -152,7 +152,7 @@ foreach ( @priline ) {
 						$b++;
 				}
 		#Checks for any value that will "weak type" to 0, and set it to 1 in that case.
-		$bbfactor ||= 1
+		$bbfactor ||= 1;
 		
 		#Final validations and checks
 		$price = $price / $bbfactor;
