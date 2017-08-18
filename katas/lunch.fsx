@@ -58,3 +58,20 @@ let voteMachine = MailboxProcessor<Message>.Start(fun inbox ->
         }
         loop []
     )
+let render() = voteMachine.Post (Render)
+let up rest = 
+    voteMachine.Post (Upvote rest)
+    render()
+    
+let down rest = 
+    voteMachine.Post (Downvote rest)
+    render()
+let dd rest = 
+    voteMachine.Post (DownAndDestroy rest)
+    render()
+let init restList = 
+    voteMachine.Post (Init restList)
+    render()
+
+
+
