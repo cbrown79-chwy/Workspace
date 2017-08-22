@@ -1,3 +1,4 @@
+// types 
 type Message = 
     | Init of string list
     | Upvote of string
@@ -7,16 +8,27 @@ type Message =
 
 type Lunch = { Name : string; Votes : int }
 
+
+
+
+
+
+// helper functions 
 let merge lunch1 lunch2 = { lunch1 with Votes = lunch1.Votes + lunch2.Votes}
 let lunch restaurantName votes = { Name = restaurantName; Votes = votes }
-
-
 let reduce listOfLunches = 
     listOfLunches 
         |> List.groupBy (fun n -> n.Name)
         |> List.map (fun (name, group) -> group |> List.reduce merge)
         |> List.sortByDescending (fun n -> n.Votes)
 
+
+
+
+
+
+
+// actor
 let lunchVoteActor = MailboxProcessor<Message>.Start(fun inbox ->
         let rec loop state = async {
             let! msg = inbox.Receive()
@@ -60,20 +72,22 @@ let lunchVoteActor = MailboxProcessor<Message>.Start(fun inbox ->
         }
         loop []
     )
+
+
+
+//shorthand
 let render() = lunchVoteActor.Post (Render)
 let up rest = 
     lunchVoteActor.Post (Upvote rest)
-    render()  
     
 let down rest = 
     lunchVoteActor.Post (Downvote rest)
-    render()
+
 let dd rest = 
     lunchVoteActor.Post (DownAndDestroy rest)
-    render()
+
 let init restList = 
     lunchVoteActor.Post (Init restList)
-    render()
 
 
 
