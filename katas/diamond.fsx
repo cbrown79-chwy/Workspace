@@ -10,7 +10,7 @@ let diamond char =
     let all = init @ (List.tail (List.rev init))
     let makeLine (str,padCount) = 
         match gridWidth - (padCount * 2 + 1) with
-       | 0 -> pad padCount + str + pad padCount
-       | a -> pad padCount + str + pad (a - 1) + str + pad padCount
+        | 0 -> pad padCount + str + pad padCount
+        | a -> pad padCount + str + pad (a - 1) + str + pad padCount
     all |> List.map makeLine
         |> List.reduce (fun x y -> sprintf "%s%s%s" x Environment.NewLine y)
