@@ -24,7 +24,6 @@ let getFactors value =
             | Some (f) -> loop (f::acc) (i / f)
             | None -> acc
     loop [1] value 
-        |> List.rev // ordering is implied by the fucntion
 
 let rec without item list = 
     match list with
@@ -44,10 +43,9 @@ let intersection list1 list2 =
         | x::xs -> loop acc l1 xs        
         | [] -> acc
 
-    let ret = match List.length list1 - List.length list2 with
-                | n when n < 0 -> loop [] list2 list1
-                | _ ->  loop [] list1 list2
-    List.sort ret
+    match List.length list1 - List.length list2 with
+        | n when n < 0 -> loop [] list2 list1
+        | _ ->  loop [] list1 list2
 
 let reduceFraction fraction = 
     let negative = fraction.Numerator < 0

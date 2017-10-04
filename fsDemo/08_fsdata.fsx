@@ -1,12 +1,15 @@
-#r @"C:\working\demo\packages\FSharp.Data\lib\net40\FSharp.Data.dll"
+#r @"C:\working\git\Sleeve.Reporting\packages\FSharp.Data.2.3.3\lib\net40\\FSharp.Data.dll"
+
 
 open FSharp.Data
 
-type FirstClear = CsvProvider<"C:\\working\\demo\\data\\SampleDataFile.csv">
+type FirstClear = CsvProvider<"C:\\working\\git\\Workspace\\fsDemo\\data\\SampleDataFile.csv", IgnoreErrors = true>
+let file = FirstClear.Load("C:\\working\\git\\Workspace\\fsDemo\\data\\SomeDataFile.csv")
+let data = file.Rows |> Seq.toArray |> Array.length
 
-FirstClear.GetSample()
+type FilePath = FilePath of string
 
-let data = FirstClear.Load("C:\\working\\demo\\data\\SomeDataFile.csv")
-
-let firstRow = data.Rows
-
+let create (s:string) =
+    if File.Exists s 
+        then Some (FilePath s)
+        else None
