@@ -252,11 +252,10 @@ let executeSproc (accountId : int) =
     conn.Open()
     dataAdapter.Fill(dataSet) |> ignore
 
-    let table = dataSet.Tables.[1]
-    let filtered = table.Select("year_month = '201706' OR year_month = '201706 (first)'")
+    let filtered = dataSet.Tables.[1].Select("year_month = '201706' OR year_month = '201706 (first)'")
     filtered |> Array.sumBy (fun a -> System.Decimal.Parse(a.["end_market_value"].ToString()))
 
-let main() =
+let main filePath =
     let accounts = queryForAccounts()
     let lines = accounts
                     |> List.map (fun (id, name) -> 
@@ -265,4 +264,6 @@ let main() =
                                     )
                     |> List.toArray
          
-    System.IO.File.WriteAllLines(@"\\paraport\home share\Personal\ChristoB\out.csv", lines)
+    System.IO.File.WriteAllLines(filePath, lines)
+
+main @"\\paraport\home share\Personal\ChristoB\out.csv"
