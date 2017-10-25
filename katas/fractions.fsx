@@ -28,13 +28,13 @@ let getDecimal fraction =
 let getFactors (value : bigint) = 
     let isFactor i pf = 
         i % pf = 0I
-    let rec potentialFactors start i = seq { 
+    let rec potentialFactors start i = seq {
         match start with
-        | Some v -> for a in v..2I..i do yield a
-        | None -> 
-            yield 2I
-            yield! potentialFactors (Some 3I) i
-    }
+        | Some v when v > 2I -> for a in v..2I..i do yield a 
+        | Some _ | None -> 
+                    yield 2I
+                    yield! potentialFactors (Some 3I) i
+                  } 
     let rec loop acc lf i = 
         let findFunc = isFactor i
         let seq = potentialFactors lf i
