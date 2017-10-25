@@ -1,29 +1,50 @@
-type Fraction = { Numerator: int; Denominator: uint32 }
+type BiggerThanZero = private BiggerThanZero of bigint 
+
+module BiggerThanZero = 
+    let create uintValue = 
+        if (uintValue > 0I ) then BiggerThanZero uintValue
+        else failwith "No zeros"
+       
+    let value (BiggerThanZero u) = 
+        u
+        
+type Fraction = { Numerator: bigint; Denominator: BiggerThanZero }
+
 
 let getFraction decimalValue = 
-    let rec fract d m = 
-        let acvl = (d * m)
-        let r = acvl % 1.0m
+    let rec fract d (m : decimal) = 
+        let a = (d * m)
+        let r = a % 1.0m
         match r with
-        | 0.0m -> { Numerator = (int acvl) ; Denominator = (uint32 m)}           
+        | 0.0m -> 
+            { Numerator = (bigint a) ; Denominator = BiggerThanZero.create (bigint m) }           
         | _ -> fract d (m * 10.0m)
     fract decimalValue 10.0m
 
+let getDecimal fraction = 
+    (decimal fraction.Numerator) / (decimal (BiggerThanZero.value fraction.Denominator))
 
-let getFactors value = 
+
+let getFactors (value : bigint) = 
     let isFactor i pf = 
-        i % pf = 0
-    let potentialFactors i = seq { 
-        yield 2
-        for a in 3..2..i do yield a 
+        i % pf = 0I
+    let rec potentialFactors start i = seq { 
+        match start with
+        | Some v -> for a in v..2I..i do yield a
+        | None -> 
+            yield 2I
+            yield! potentialFactors (Some 3I) i
     }
-    let rec loop acc i = 
+    let rec loop acc lf i = 
         let findFunc = isFactor i
-        let seq = potentialFactors i
+        let seq = potentialFactors lf i
         match Seq.tryFind findFunc seq with
-            | Some (f) -> loop (f::acc) (i / f)
+            | Some (f) -> loop (f::acc) (Some (f)) (i / f)
             | None -> acc
-    loop [1] value 
+
+    if (value < 0I) then loop [-1I] None (value * -1I)
+    elif (value > 0I) then loop [] None value
+    else []
 
 let rec without item list = 
     match list with
@@ -40,7 +61,7 @@ let intersection list1 list2 =
     let rec loop acc l1 l2 = 
         match l2 with
         | x::xs when List.contains x l1 -> loop (x::acc) (without x l1) xs
-        | x::xs -> loop acc l1 xs        
+        | _::xs -> loop acc l1 xs        
         | [] -> acc
 
     match List.length list1 - List.length list2 with
@@ -48,19 +69,22 @@ let intersection list1 list2 =
         | _ ->  loop [] list1 list2
 
 let reduceFraction fraction = 
-    let negative = fraction.Numerator < 0
+    let negative = fraction.Numerator < 0I
 
-    let absNumerator = System.Math.Abs fraction.Numerator
+    let absNumerator = if negative then fraction.Numerator * -1I else fraction.Numerator;
     let nFactorized = getFactors absNumerator
-    let dFactorized = getFactors (int fraction.Denominator)
+    let dFactorized = getFactors (BiggerThanZero.value (fraction.Denominator))
     let commonFactors = intersection nFactorized dFactorized
+    let bigintMultiply (a : bigint) (b : bigint) =  
+        System.Numerics.BigInteger.Multiply(a,  b)
 
-    let newNumerator = 1::except commonFactors nFactorized
-                            |> List.reduce ( * ) 
-    let newDenominator = 1::except commonFactors dFactorized
-                            |> List.reduce ( * ) 
+    let newNumerator = 1I::except commonFactors nFactorized
+                            |> List.reduce bigintMultiply 
+
+    let newDenominator = 1I::except commonFactors dFactorized
+                            |> List.reduce bigintMultiply 
 
     match negative with
-    | false -> { Numerator = newNumerator ; Denominator = (uint32 newDenominator) }
-    | _ -> { Numerator = newNumerator * -1 ; Denominator = (uint32 newDenominator) }
+    | false -> { Numerator = newNumerator ; Denominator = (BiggerThanZero.create newDenominator) }
+    | _ -> { Numerator = newNumerator * -1I ; Denominator = (BiggerThanZero.create newDenominator) }
  
