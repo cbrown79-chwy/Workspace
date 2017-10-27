@@ -1,13 +1,14 @@
 type Name = string
 type Percentage = decimal
-
+type Return = decimal
+type TargetReturn = decimal
 
 
 type Model = Name
 
 type Allocation = ( Model * Percentage ) list
 type MarketValue = decimal
-type AccountReturn = decimal
+type AccountReturn = Return
 type Account = { 
         TAllocations : Allocation * MarketValue; 
         TMinusOneAllocations: Allocation * MarketValue;
@@ -17,8 +18,7 @@ type Account = {
 type ModelReturn = decimal * Model
 type RealizedTrackingError = AccountReturn -> TargetReturn
 type SleeveReturn = ModelReturn -> RealizedTrackingError
-type SleevedMarketValue = ModelAllocation -> MarketValue
-type TargetReturn = decimal
+type SleevedMarketValue = Allocation -> MarketValue
  // no tracking error return
 
 type SleeveLevelPerformance = Account -> ModelReturn list -> TargetReturn
