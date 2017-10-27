@@ -10,6 +10,10 @@ module BiggerThanZero =
         
 type Fraction = { Numerator: bigint; Denominator: BiggerThanZero }
 
+let multiplyByNegativeOne (incoming : BiggerThanZero) = 
+    let m = BiggerThanZero.value incoming
+    m * -1I
+
 
 let getFraction decimalValue = 
     let rec fract d (m : decimal) = 
@@ -69,10 +73,7 @@ let intersection list1 list2 =
         | _ ->  loop [] list1 list2
 
 let reduceFraction fraction = 
-    let negative = fraction.Numerator < 0I
-
-    let absNumerator = if negative then fraction.Numerator * -1I else fraction.Numerator;
-    let nFactorized = getFactors absNumerator
+    let nFactorized = getFactors fraction.Numerator
     let dFactorized = getFactors (BiggerThanZero.value (fraction.Denominator))
     let commonFactors = intersection nFactorized dFactorized
     let bigintMultiply (a : bigint) (b : bigint) =  
@@ -83,8 +84,8 @@ let reduceFraction fraction =
 
     let newDenominator = 1I::except commonFactors dFactorized
                             |> List.reduce bigintMultiply 
+    
+    { Numerator = newNumerator ; Denominator = (BiggerThanZero.create newDenominator) }
 
-    match negative with
-    | false -> { Numerator = newNumerator ; Denominator = (BiggerThanZero.create newDenominator) }
-    | _ -> { Numerator = newNumerator * -1I ; Denominator = (BiggerThanZero.create newDenominator) }
+ 
  
