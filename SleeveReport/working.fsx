@@ -31,4 +31,5 @@ type FactsetModel = Name * Return
 type Input = BloombergModel -> Model
 
 
-let a (b : Input) c = b >> c
+let getFile() = 
+    
