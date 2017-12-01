@@ -40,6 +40,8 @@ Chart.Line(fryOverTime
             , XTitle = "Years"
             , YTitle = "Balance in Dollars")
        .WithXAxis(Min=0.0, Max=1000.0)
+       .WithYAxis(Log = true)
 
 
+//fryOverTime.[500 .. 650]
 
