@@ -1,5 +1,3 @@
-open FSharp.Charting._ChartStyleExtensions
-open FSharp.Charting._ChartStyleExtensions
 #load "..\\FSharp.Charting.0.91.1\\lib\\net45\\FSharp.Charting.fsx"
 
 open FSharp.Charting
