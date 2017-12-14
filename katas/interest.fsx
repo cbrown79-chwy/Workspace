@@ -22,7 +22,7 @@ let compound options =
                         core (1.0 + rate) (f * options.TermInYears)
 
 let fry = compound { Compounding = TimesPerYear 1.0
-                     Rate = 0.0225
+                     Rate = 0.0525
                      Principal = 0.93
                      TermInYears = 1000.0 } 
 
