@@ -5,14 +5,14 @@ let toRoman iVal =
     let rec loop acc n list = 
         match list with 
             | [] -> acc
-            | (i, s)::xs when n >= i -> loop (acc + s) (n - i) list
-            | x::xs -> loop acc n xs
+            | (i, s)::_ when n >= i -> loop (acc + s) (n - i) list
+            | _::xs -> loop acc n xs
     loop "" iVal vals
 
 let fromRoman sVal = 
     let rec loop acc (str : string) list = 
         match list with 
             | [] -> acc
-            | (i, s)::xs when str.StartsWith(s) -> loop (acc + i) (str.Substring(s.Length)) list
-            | x::xs -> loop acc str xs
+            | (i, s)::_ when str.StartsWith(s) -> loop (acc + i) (str.Substring(s.Length)) list
+            | _::xs -> loop acc str xs
     loop 0 sVal vals

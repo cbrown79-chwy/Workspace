@@ -14,3 +14,4 @@ let diamond char =
         | a -> pad padCount + str + pad (a - 1) + str + pad padCount
     all |> List.map makeLine
         |> List.reduce (fun x y -> sprintf "%s%s%s" x Environment.NewLine y)
+
