@@ -36,8 +36,8 @@ let item1, _, item3 = myTriple
 
 
 
-let x = (45, 43) 
-let y = (45, 43)
+let x = (45, "Joe Montana", [1;2;3]) 
+let y = (45, "Joe Montana", [1;2;3])
 
 let z = (x = y) // true!
 

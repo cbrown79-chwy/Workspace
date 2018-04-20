@@ -18,7 +18,7 @@ let printNumber floatVal =
     printfn "Printing %f!" floatVal
 
 
-let printMoreNumbers (minimum:float) (maximum:float) = 
+let printMoreNumbers (minimum) (maximum) = 
     List.iter printNumber [minimum..0.45..maximum]
 
 

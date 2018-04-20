@@ -1,0 +1,4 @@
+RESTRICTION: >= net40
+NUGET
+  remote: https://www.nuget.org/api/v2
+    FSharp.Data (2.4.6)

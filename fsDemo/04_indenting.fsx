@@ -4,3 +4,4 @@ let fn argument =
             printfn arg
         0
     subfunction "Christopher Brown"
+    subfunction "Hello"
