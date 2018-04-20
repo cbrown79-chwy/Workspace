@@ -1,6 +1,6 @@
 public interface IDoSomeShit
 {
-    public void DoSomeStuff();    
+    void DoSomeStuff();    
 }
 
 public class ShitDoer : IDoSomeShit
@@ -27,21 +27,4 @@ public class LoggingShitDoer : IDoSomeShit
         _thingToLog.DoSomeStuff();
         Log.WriteMoreThings("Things")
     }
-}
-
-
-public class Program
-{
-
-    
-}
-
-
-public class Decorations 
-{
-    public PrincipalSoftwareEngineer GetNameAndTitle(int level, string name)
-    {
-
-    }
-
 }
