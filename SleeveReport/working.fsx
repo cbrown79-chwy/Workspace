@@ -23,13 +23,9 @@ type SleevedMarketValue = Allocation -> MarketValue
 
 type SleeveLevelPerformance = Account -> ModelReturn list -> TargetReturn
 
-
 type BloombergModel = Name * Return
 type AdventModel = Name * Return
 type FactsetModel = Name * Return
 
 type Input = BloombergModel -> Model
 
-
-let getFile() = 
-    

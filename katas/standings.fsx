@@ -5,8 +5,8 @@ type Division =
     | MiddleSchool
     | HighSchool
 
-type Game = { Id: int; HomeTeam: string; HomeScore: int; VisitingTeam: string; VisitorsScore: int }
-type StandingsLine = { Team: string; Wins: int; Losses: int; Ties: int }
+type Game = { Id: int; HomeTeam: string; HomeScore: uint32; VisitingTeam: string; VisitorsScore: uint32 }
+type StandingsLine = { Team: string; Wins: uint32; Losses: uint32; Ties: uint32 }
 
 
 let divisionToCalendarUrlMap =
@@ -35,31 +35,31 @@ let parseGame str =
         let matches = reg.Match str
         Some { 
                 Id = Int32.Parse matches.Groups.[1].Value; 
-                HomeScore = Int32.Parse matches.Groups.[5].Value; 
+                HomeScore = UInt32.Parse matches.Groups.[5].Value; 
                 HomeTeam = matches.Groups.[4].Value; 
                 VisitingTeam = matches.Groups.[2].Value; 
-                VisitorsScore = Int32.Parse matches.Groups.[3].Value 
+                VisitorsScore = UInt32.Parse matches.Groups.[3].Value 
         }
     else
         None
     
 let getStandingsLinesFromGame game = 
-    let home = { Team = game.HomeTeam; Wins = 0; Losses = 0; Ties = 0 }
-    let away =  { Team = game.VisitingTeam; Wins = 0; Losses = 0; Ties = 0 }
+    let home = { Team = game.HomeTeam; Wins = 0u; Losses = 0u; Ties = 0u }
+    let away =  { Team = game.VisitingTeam; Wins = 0u; Losses = 0u; Ties = 0u }
     
     match game.VisitorsScore - game.HomeScore with 
-    | 0 ->  [
-                { home with Ties = 1 }
-                { away with Ties = 1 }
+    | 0u ->  [
+                { home with Ties = 1u }
+                { away with Ties = 1u }
             ] 
-    | n when n > 0 
+    | n when n > 0u 
         ->  [
-                { home with Losses = 1 }
-                { away with Wins = 1 }
+                { home with Losses = 1u }
+                { away with Wins = 1u }
             ] 
     | _ ->  [
-                { home with Wins = 1 }
-                { away with Losses = 1 }
+                { home with Wins = 1u }
+                { away with Losses = 1u }
             ] 
 
 let combineStandingsLines s1 s2 = 
@@ -88,7 +88,7 @@ let rec combineLists list list2 =
     | x::xs -> combineLists (addStandingsLineToList x list) xs
     
 let standingsVal s = 
-    ((s.Wins * 2) + (s.Losses * -2) + s.Ties) * -1
+    (((int)s.Wins * 2) + ((int)s.Losses * -2) + (int)s.Ties) * -1
     
 let getCompleteStandings games = 
     games |>

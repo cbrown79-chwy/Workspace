@@ -1,6 +1,7 @@
 let vals = [(1000, "M");(900, "CM");(500, "D");(400, "CD");
             (100, "C");(90, "XC");(50, "L");(40, "XL");
             (10, "X");(9,"IX");(5,"V");(4,"IV");(1, "I")]
+            
 let toRoman iVal =  
     let rec loop acc n list = 
         match list with 
@@ -16,3 +17,7 @@ let fromRoman sVal =
             | (i, s)::_ when str.StartsWith(s) -> loop (acc + i) (str.Substring(s.Length)) list
             | _::xs -> loop acc str xs
     loop 0 sVal vals
+
+
+let xs = [| 0..9 |] |> Array.fold (fun str n -> 
+            sprintf "%s,%i" str n) "" 

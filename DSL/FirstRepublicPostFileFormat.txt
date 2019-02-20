@@ -1,0 +1,48 @@
+// This is a representation of the FirstRepublicPostFileFormat
+
+FileInfo { 
+    SingleFile
+    SaveLocation "\\ServerName\SharedFolder\FirstRepublic_{PostId}_{ServerTime:hhmm}.csv" 
+}  
+
+// this indicates a single file output
+
+Output { 
+    Delimited CRLF ","
+    "Side" Map { If Equal Trade.Side Side.Sell Then Text "S" Else Text "B" }
+    "AccountId" Map { Substring Trade.CustodianAccountId 2 }
+    "Account" Trade.AccountShortName
+    "Shares" Map { RoundUp Trade.ShareCount 0 }
+    "Cusip" Trade.Security.Cusip
+    "Ticker" Trade.Security.Ticker
+    "Commission" Map { RoundUp Trade.Commission 4 }
+    "Price" Map { RoundUp Trade.ExecutionPrice 6 }
+    "Trade Date" Map { DateFormat Trade.TradeDate "MM/dd/yyyy" }
+    "Settle Date" Map { DateFormat Trade.SettleDate "MM/dd/yyyy" }
+    "DTC ID" Trade.Fins
+    "Account NM" Trade.CustodianAccountId
+}
+
+// This describes the nature of the output file itself.
+// A CRLF comma delimited file.
+// Each column is described, with a "Map" object in it, or a direct value.
+// Map objects represent a function to perform on the data.
+
+Data {
+    Source
+        AccountTrade
+    Filter 
+        NotEqual Security.InstrumentType InstrumentType.InternationalLocal
+    }
+
+    GroupBy 
+        AccountId Ticker Side
+    Aggregate 
+        Sum Commission
+        Sum ShareCount
+
+
+// This indicates trades should come in grouped by the 3 fields indicated. The Aggregate section indicates what fields should be aggregated in the grouped output.
+// By default, the group should use 
+
+// Note: The trade fields should be public, standardized, and knowable.

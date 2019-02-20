@@ -2,7 +2,6 @@ open FSharp
 
 
 
-let inline (>>=) a b = Option.bind b a
 
 
 type OrderQty = OrderQty of int

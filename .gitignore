@@ -1,4 +1,7 @@
 FSharp.Data.2.4.3
+FSharp.Data.3.0.0
 FSharp.Core.4.0.0.1
 katas/juliet.fsx
 FSharp.Charting.0.91.1
+**\node_modules\**
+**\*.cache
