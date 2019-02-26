@@ -1,21 +1,21 @@
+open System.Collections.Generic
 #r "FSharp.Data.3.0.0\\lib\\net45\\Fsharp.Data.dll"
 
 open System.IO;
-open System.Collections.Generic
 open FSharp.Data
 type FactorsFile = CsvProvider<"C:\\working\\data\\martha_sample.txt", "\t">
-
-let writeData filePath stringLines =
-    try
-        File.WriteAllLines (filePath , Array.ofList stringLines)
-        Ok (List.length stringLines)
-    with 
-    | e -> Error e.Message
 
 let loadFile filePath =         
     let folderPath = Path.GetDirectoryName filePath
     let fileName = Path.GetFileName filePath
 
+    let writeData filePath stringLines =
+        try
+            File.WriteAllLines (filePath , Array.ofList stringLines)
+            Ok (List.length stringLines)
+        with 
+        | e -> Error e.Message
+    
     let getNewFileName v = 
         sprintf "%s%c%s_%s" folderPath Path.DirectorySeparatorChar v fileName
     let toUpper c =
@@ -24,7 +24,8 @@ let loadFile filePath =
         v >= c1 && v <= c2
 
     let groupByFirstCharacterOfIssueColumnName (row:FactorsFile.Row) =  
-        match toUpper row.IssueColumnName.[0] with  
+        let firstCharacterOfIssueColumnName = toUpper row.IssueColumnName.[0]
+        match firstCharacterOfIssueColumnName with  
         | x when inRange 'A' 'B' x  -> "A-B"
         | x when inRange 'C' 'D' x -> "C-D"
         | x when inRange 'E' 'F' x -> "E-F"

@@ -15,8 +15,8 @@ let createGroup (i1, s1) (i2, s2) =
 
 
 let gb l =
-    let m = new Dictionary<int, string list> ()
-    List.iter (fun (i, s) -> 
+    let m = new Dictionary<string, string list> ()
+    Seq.iter (fun (i, s) -> 
                         if m.ContainsKey i then m.[i] <- s::m.[i]
                         else m.Add ( i, [s] )
                    ) l
