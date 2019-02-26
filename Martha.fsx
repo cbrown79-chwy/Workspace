@@ -1,4 +1,3 @@
-open System.Collections.Generic
 #r "FSharp.Data.3.0.0\\lib\\net45\\Fsharp.Data.dll"
 
 open System.IO;
