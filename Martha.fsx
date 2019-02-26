@@ -23,7 +23,7 @@ let loadFile filePath =
     let inRange c1 c2 v = 
         v >= c1 && v <= c2
 
-    let groupByFirstCharacterOfIssueColumnName (row:FactorsFile.Row) =  
+    let getKeyFromFileRow (row:FactorsFile.Row) =  
         let firstCharacterOfIssueColumnName = toUpper row.IssueColumnName.[0]
         match firstCharacterOfIssueColumnName with  
         | x when inRange 'A' 'B' x  -> "A-B"
@@ -40,7 +40,7 @@ let loadFile filePath =
     let fileHeader = "Company_ID\tEntity_name\tcountry\tticker\tcusip\tsedol\tisin\tIssueColumnName\tIssueValue"
 
     FactorsFile.Load(filePath).Rows 
-        |> Seq.groupBy groupByFirstCharacterOfIssueColumnName
+        |> Seq.groupBy getKeyFromFileRow
         |> Seq.iter (fun (groupByKey, groupedRows) ->    
                             let newFileName = getNewFileName groupByKey
                             let res = writeData newFileName (fileHeader :: ((groupedRows |> Seq.map stringifyLine) |> List.ofSeq))
