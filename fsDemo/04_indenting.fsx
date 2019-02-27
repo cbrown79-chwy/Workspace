@@ -1,7 +1,7 @@
 let fn argument = 
-    let subfunction arg = 
-        let deeplyScoped = 
+    let nestedFunction arg = 
+        let reallyNestedFunction = 
             printfn arg
         0
-    subfunction "Christopher Brown"
-    subfunction "Hello"
+    nestedFunction "Christopher Brown"
+    nestedFunction "Hello"
