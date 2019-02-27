@@ -15,14 +15,14 @@ let writeData filePath stringLines =
 let getNewFileName folderPath v fileName = 
     sprintf "%s%c%s_%s" folderPath Path.DirectorySeparatorChar v fileName
 
-let toUpper c =
+let firstCharInUppercase c =
     c.ToString().ToUpper().[0]
 
 let inRange c1 c2 v = 
     v >= c1 && v <= c2
 
 let getKeyFromFileRow (row:FactorsFile.Row) =  
-    let firstCharacterOfIssueColumnName = toUpper row.IssueColumnName
+    let firstCharacterOfIssueColumnName = firstCharInUppercase row.IssueColumnName
     match firstCharacterOfIssueColumnName with  
     | x when inRange 'A' 'B' x  -> "A-B"
     | x when inRange 'C' 'D' x -> "C-D"
