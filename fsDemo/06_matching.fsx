@@ -4,6 +4,8 @@ let greet name =
     | hr when hr < 17 ->  sprintf "Good afternoon %s!" name
     | _ -> sprintf "Good evening, %s!" name
 
+    
+
 type Shape = 
     | Circle of Radius : float
     | Square of SideLength : float
@@ -15,3 +17,4 @@ let calcArea shape =
     | Circle (r) -> System.Math.PI * r * r
     | Square (s) -> s * s
     | Rectangle (l, s) -> s * l
+    | Line -> 0.0

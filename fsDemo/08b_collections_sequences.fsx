@@ -11,3 +11,5 @@ Seq.take 15 howLongWouldYouExpectThisToBe
 
 Seq.takeWhile (fun n -> n < 10) howLongWouldYouExpectThisToBe
 
+
+Seq.groupBy (fun n -> n % 10) howLongWouldYouExpectThisToBe
