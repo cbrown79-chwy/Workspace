@@ -2,6 +2,7 @@
 
 open System.IO;
 open FSharp.Data
+
 type FactorsFile = CsvProvider<"C:\\working\\data\\martha_sample.txt", "\t">
 
 
@@ -36,7 +37,7 @@ let stringifyLine (line:FactorsFile.Row) =
     sprintf "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" line.Company_ID line.Entity_name line.Country line.Ticker line.Cusip line.Sedol line.Isin line.IssueColumnName line.IssueValue
 
 
-let loadFile filePath =         
+let splitFiles filePath =         
     let folderPath = Path.GetDirectoryName filePath
     let fileName = Path.GetFileName filePath
     let fileHeader = "Company_ID\tEntity_name\tcountry\tticker\tcusip\tsedol\tisin\tIssueColumnName\tIssueValue"
@@ -52,5 +53,5 @@ let loadFile filePath =
                     ) 
 
 
-loadFile "V:\\ChristoB\\temp\\4592_Parametric_Compliance_DM_20190201.txt"
+splitFiles "V:\\ChristoB\\temp\\4592_Parametric_Compliance_DM_20190301.txt"
 

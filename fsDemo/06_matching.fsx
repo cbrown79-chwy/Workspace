@@ -16,5 +16,5 @@ let calcArea shape =
     match shape with
     | Circle (r) -> System.Math.PI * r * r
     | Square (s) -> s * s
-    | Rectangle (l, s) -> s * l
+    | Rectangle (l, s) -> l * s
     | Line -> 0.0
