@@ -5,3 +5,4 @@ katas/juliet.fsx
 FSharp.Charting.0.91.1
 **\node_modules\**
 **\*.cache
+.vscode\**

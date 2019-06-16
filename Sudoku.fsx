@@ -180,9 +180,3 @@ let solve grid =
             else 
                 Some (Seq.head possibleAnswers)
     createSolution grid
-
-
-            
-
-    
-
