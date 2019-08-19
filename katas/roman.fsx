@@ -19,5 +19,3 @@ let fromRoman sVal =
     loop 0 sVal vals
 
 
-let xs = [| 0..9 |] |> Array.fold (fun str n -> 
-            sprintf "%s,%i" str n) "" 

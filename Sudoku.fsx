@@ -99,9 +99,11 @@ let positionsToCheck =
                                                 @ allPositionsBySector.[sectorMap.[n]] |> List.filter (fun m -> m <> n) |> Set.ofList )) |> Map.ofList
 
 
-let asString (grid : Grid) = 
-    let stringValues = allPositions |> List.map (fun position -> if grid.[position] = 0 then "-" else sprintf "%i" grid.[position]) |> Array.ofList
-    String.Join(",", stringValues)
+let asString (g : Grid option) = 
+    match g with 
+    | None -> ""
+    | Some grid -> let stringValues = allPositions |> List.map (fun position -> if grid.[position] = 0 then "-" else sprintf "%i" grid.[position]) |> Array.ofList
+                   String.Join(",", stringValues)
 
 // expect a string like "A1,B1,C1," (etc, till I9)
 let parseGrid (puzzle : string) : Grid option = 
@@ -115,8 +117,10 @@ let parseGrid (puzzle : string) : Grid option =
         let gridAsList = List.zip allPositions values 
         Some (Map.ofList gridAsList)
 
-let renderGrid (grid : Grid) = 
-    System.Environment.NewLine + String.Join("", [|
+let renderGrid (grid : Grid option) = 
+    match grid with 
+    | None -> ""
+    | Some g -> System.Environment.NewLine + String.Join("", [|
                         for r in 1..9 
                             do 
                                 if r > 1 && r % 3 = 1 then yield "*********************************" + System.Environment.NewLine
@@ -124,7 +128,7 @@ let renderGrid (grid : Grid) =
                                     do 
                                         let pos = { Rank = enum<Rank>(r) ;  File = enum<File>(f)}
                                         if f > 1 && f % 3 = 1 then yield " | "
-                                        match grid.[pos] with 
+                                        match g.[pos] with 
                                         | 0 -> yield " - "
                                         | m -> yield sprintf " %i " m
                                 yield System.Environment.NewLine
@@ -156,7 +160,9 @@ let isSolved solutions =
 
 // Solve a grid, if possible.
 let solve grid =  
+    let mutable iterationCounter = 0L
     let rec createSolution g = 
+        iterationCounter <- iterationCounter + 1L
         let possibleValuesByPosition = allPositions 
                                         |> List.map (fun n -> getAvailableValues g n) 
 
@@ -179,7 +185,7 @@ let solve grid =
                 None 
             else 
                 Some (Seq.head possibleAnswers)
-    createSolution grid
+    createSolution grid, iterationCounter
 
 
             
