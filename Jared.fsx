@@ -61,13 +61,12 @@ let modelAllocation str h = { Model = makeModel str; Holdings = h }
 // a list of weights to apply to the model, and returning a set of 'sleeved' holdings.
 type SleeveProcess = Holding list -> ModelAllocations list -> ModelWeight list -> SleevedHolding list
 
-let allocation ticker holding  = 
-    match holding.Ticker = ticker with 
-    | true -> Some holding.Allocation
-    | false -> None
-
-let findHolding ticker modelAllocations =
-    let fi holdings = holdings |> List.choose (fun modelHolding -> allocation ticker modelHolding)
+/// Takes a ticker, and a set of model allocations, and returns a list of tuples
+/// (Model that holds the specified ticker, and it's specified allocation.)
+let findModelsWithHoldings ticker modelAllocations =
+    let fi holdings = holdings |> List.choose (fun modelHolding -> match modelHolding.Ticker = ticker with 
+                                                                   | true -> Some modelHolding.Allocation
+                                                                   | false -> None)
     let modelsWithTicker = modelAllocations |> List.where (fun x -> not (List.isEmpty (fi x.Holdings)))
     match modelsWithTicker with 
     | [] -> []
@@ -78,7 +77,7 @@ let sleeveHoldings holdings models weights =
     holdings 
         |> List.collect (fun h ->
                             let t = h.Ticker
-                            let m = findHolding t models  // a list of models that hold the security
+                            let m = findModelsWithHoldings t models  // a list of models that hold the security, and the allocations
                             match m with 
                             | [] -> 
                                 weights |> 

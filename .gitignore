@@ -1,6 +1,10 @@
-FSharp.Data.2.4.3
-FSharp.Data.3.0.0
-FSharp.Core.4.0.0.1
+FSharp.Data*
+System.ValueTuple*
+FSharp.Core*
+FSharp.Data.SqlClient.2.0.5
+ExcelProvider*
+ExcelDataReader*.3.4.1
+Argu*
 katas/juliet.fsx
 FSharp.Charting.0.91.1
 **\node_modules\**

@@ -1,3 +1,6 @@
+#r "netstandard"
+#r "Facades/netstandard"
+
 open System
 
 type Side = Buy | Sell
