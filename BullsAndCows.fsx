@@ -1,37 +1,51 @@
 type Response = | Bull | Cow | Empty
 
-let bullAndCow (attempt : int[]) (answer : int[])  = 
+let bullsAndCows (attempt : int[]) (answer : int[])  = 
     let bullCowOrNothing (idx:int) (chr:int) = 
         if (answer.[idx] = chr) then Bull
         else if (Array.contains chr answer) then Cow
         else Empty
-    Array.mapi bullCowOrNothing attempt |> Array.filter (fun n -> n <> Empty) |> Array.sort
 
-let rec getGuess() =
+    Array.mapi bullCowOrNothing attempt 
+        |> Array.filter (fun n -> n <> Empty) 
+        |> Array.sort
+
+let rec getGuess bs =
     printf "Enter your guess. "
     let guess = System.Console.ReadLine()
     match guess.ToCharArray() with
-    | s when Array.forall System.Char.IsDigit s && Array.length s = 4 -> 
-        Array.map (fun c -> System.Int32.Parse(c.ToString())) s
-    | _ -> getGuess()
+    | s 
+        when Array.forall System.Char.IsDigit s && Array.length s = bs 
+            -> Array.map (fun c -> System.Int32.Parse(string c)) s
+    | _ 
+            -> getGuess bs
 
 let pluralize (item, count) = 
-    if count > 1 then sprintf "%d %As" count item
-    else sprintf "1 %A" item
+    if count > 1 then 
+        sprintf "%d %As" count item
+    else 
+        sprintf "1 %A" item
 
-let rec generateAnAnswer set = 
-    let r = System.Random(); 
-    let res = Set.add (r.Next(0, 9)) set
-    if Set.count res = 4 then res
-    else generateAnAnswer res
+let rec generateAnAnswer arr bs = 
+    let r = System.Random()
+    let v = r.Next(0, 10)
 
-let playPersonGuessesComputer() = 
-    let computersAnswer = generateAnAnswer Set.empty |> Set.toArray
+    if Array.length arr = bs then 
+        arr
+    elif Array.contains v arr then 
+        generateAnAnswer arr bs
+    else    
+        generateAnAnswer (Array.append arr [|v|]) bs
+
+let playPersonGuessesComputer boardSize = 
+    let computersAnswer = generateAnAnswer Array.empty boardSize
+
     let rec play guesses =
-        let guess = getGuess()
+        let guess = getGuess boardSize
         let guessCount = guesses + 1
-        let result = bullAndCow guess computersAnswer
-        if Array.forall (fun r -> r = Bull) result && Array.length result = 4 then
+        let result = bullsAndCows guess computersAnswer
+
+        if Array.forall (fun r -> r = Bull) result && Array.length result = boardSize then
             printfn "You win, in %d guesses" guessCount
             guessCount
         else
@@ -41,6 +55,23 @@ let playPersonGuessesComputer() =
             else printfn "Good try! None of these are in the answer!"
             play guessCount
     play 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 (*
     Solving in micro... assume a 2 digit puzzle with values from 1, 2, 3, 4, 5. Initial guess (1, 2)
