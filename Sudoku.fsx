@@ -1,7 +1,4 @@
-#r "FSharp.Collections.ParallelSeq.dll"
-
 open System
-open FSharp.Collections.ParallelSeq
 
 
 type Sector = | TopLeft = 1 | TopMiddle = 2 | TopRight = 3 | CenterLeft = 4 | CenterMiddle = 5 | CenterRight = 6 | BottomLeft = 7 | BottomMiddle = 8 | BottomRight = 9
@@ -154,8 +151,8 @@ let getAvailableValues (grid : Grid) position =
 let isNotSolvable solutions = 
     if Array.isEmpty solutions then false 
     else 
-        let test = solutions |> Array.minBy lengthOfSecondItemInTuple
-        snd test |> Array.isEmpty
+        let test = solutions |> Array.tryFind (fun (_, b) -> Array.length b = 0)
+        Option.isSome test
 
 let isSolved solutions = 
     let verify filter  = solutions 
@@ -176,53 +173,46 @@ let isSolved solutions =
     
 // Solve a grid, if possible.
 let solve grid =  
-    let mutable iterationCounter = 0L
     let rec createSolution g = 
-        iterationCounter <- iterationCounter + 1L
-        let possibleValuesByPosition = allPositions 
-                                        |> Array.map (fun n -> getAvailableValues g n) 
+        async {
+            let possibleValuesByPosition = allPositions 
+                                            |> Array.map (fun n -> getAvailableValues g n) 
 
-        if isNotSolvable possibleValuesByPosition then 
-            None
-        elif isSolved possibleValuesByPosition then
-            let mapToSingleValue (ps, m : int[]) = (ps, m.[0])
-            let result = possibleValuesByPosition 
-                            |> Array.map mapToSingleValue 
-                            |> Map.ofArray
-            Some result
-        else
-            let moreThanOnePossibleAnswer e = (snd e) |> Array.length > 1
-            let tests = possibleValuesByPosition |> Array.filter moreThanOnePossibleAnswer
-            // we've run out of possible options if this is Len == 0
-            if Array.length tests = 0 then None
+            if isNotSolvable possibleValuesByPosition then 
+                return None
+            elif isSolved possibleValuesByPosition then
+                let mapToSingleValue (ps, m : int[]) = (ps, m.[0])
+                let result = possibleValuesByPosition 
+                                |> Array.map mapToSingleValue 
+                                |> Map.ofArray
+                return Some result
             else
-                let (ps, l) = tests |> Array.minBy lengthOfSecondItemInTuple
-                let notTheCurrentPosition key _ = key <> ps
+                let moreThanOnePossibleAnswer e = (snd e) |> Array.length > 1
+                let tests = possibleValuesByPosition |> Array.filter moreThanOnePossibleAnswer
+                // we've run out of possible options if this is Len == 0
+                if Array.length tests = 0 then return None
+                else
+                    let (ps, l) = tests |> Array.minBy lengthOfSecondItemInTuple
+                    let notTheCurrentPosition key _ = key <> ps
 
-                
-
-
-                let possibleAnswers = seq [for i in l do
-                                            let newGrid = (g |> Map.filter notTheCurrentPosition).Add(ps, i)
-                                            let possibleSolution = createSolution newGrid
-                                            if Option.isSome (possibleSolution) then yield (Option.get possibleSolution)
-                                        ]
-                
-                
-                if Seq.isEmpty possibleAnswers then 
-                    None 
-                else 
-                    Some (Seq.head possibleAnswers)
-    createSolution grid, iterationCounter
+                    let potentialAnswersCollectors = [for i in l do
+                                                        let newGrid = (g |> Map.filter notTheCurrentPosition).Add(ps, i)
+                                                        createSolution newGrid]
+                    
+                    let! result = Async.Choice potentialAnswersCollectors
+                    return result
+        }
+    let solution = createSolution grid |> Async.RunSynchronously 
+    solution
 
 let parseAndSolve puzzleAsText =
     let parsed = parseGrid puzzleAsText
     if Option.isNone parsed then "Parse error."
     else
-        let a, b = Option.get parsed |> solve
+        let a = Option.get parsed |> solve
         
         if Option.isNone a then "No solution found."
-        else sprintf "%s\n\nIn %d iterations." (renderGrid a) b
+        else sprintf "%s\n\nIn unknwon iterations." (renderGrid a)
 
 // Easy puzzle.
 
